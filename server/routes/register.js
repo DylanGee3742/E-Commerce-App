@@ -3,8 +3,11 @@ const { pool } = require('../configuration/dbConfig');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
+
 //Register user
-router.post(async (req, res) => {
+router
+.route('/')
+.post(async (req, res) => {
     let {first_name, last_name, email, password, confirm_password } = req.body;
 
     //Ref
@@ -36,9 +39,14 @@ router.post(async (req, res) => {
     };
 
     if (errors.length > 0 ) {
-        res.json({ errors })
+        res.send(errors);
+        res.redirect(`http://localhost:3000/register`)
     } else {
         //Form validation passed
+
+        let hashedPassword = await bcrypt.hash(password, 10);
+        console.log(hashedPassword)
+
         pool.query(
             'SELECT * FROM users WHERE email = $1',
             [email],
@@ -52,19 +60,20 @@ router.post(async (req, res) => {
                 //If user already exists 
                 if (results.rows.length > 0) {
                     errors.push({ message: 'Email already exists' });
+                    res.redirect(`http://localhost:3000/login`)
                     res.json({ errors });
                 } else {
                     //No user in database
                     pool.query(
                         `INSERT INTO users (first_name, last_name, email, password) 
                         VALUES ($1, $2, $3, $4) RETURNING id, password`,
-                        [first_name, last_name, email, password],
+                        [first_name, last_name, email, hashedPassword],
                         (err, results) => {
                             if (err) {
                                 throw err;
                             }
                             console.log(results.rows);
-                            res.redirect('/login')
+                            res.redirect(`http://localhost:3000/login`)
                         }
                     )
                 }

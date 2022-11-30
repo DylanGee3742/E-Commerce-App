@@ -3,6 +3,9 @@ const app = express();
 const PORT = 5000;
 const registerRouter = require('./routes/register');
 
+//Allow info to be sent from front to backend
+app.use(express.urlencoded({ extended: false }))
+
 //Routes
 app.use('/register', registerRouter);
 
