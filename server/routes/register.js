@@ -39,8 +39,7 @@ router
     };
 
     if (errors.length > 0 ) {
-        res.send(errors);
-        res.redirect(`http://localhost:3000/register`)
+        res.send(errors.message).redirect('http://localhost:3000/register');
     } else {
         //Form validation passed
 
@@ -61,7 +60,7 @@ router
                 if (results.rows.length > 0) {
                     errors.push({ message: 'Email already exists' });
                     res.redirect(`http://localhost:3000/login`)
-                    res.json({ errors });
+                    return errors;
                 } else {
                     //No user in database
                     pool.query(
