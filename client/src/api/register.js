@@ -1,5 +1,6 @@
+
 export const registeruser = async (first_name, last_name, email, password, confirm_password) => {
-    const res = await fetch('/register', {
+    const res = await fetch('http://localhost:5000/register', {
         method: "POST",
         body: JSON.stringify({
             first_name: first_name,
@@ -9,11 +10,10 @@ export const registeruser = async (first_name, last_name, email, password, confi
             confirm_password: confirm_password
         }),
         headers: {
-            'Content-Type': "application/json"
+            'Content-Type': "application/json",
+
         },
     });
-
-    const newUser = await res.json();
-
-    return newUser;
+    
+        return res;
 };
